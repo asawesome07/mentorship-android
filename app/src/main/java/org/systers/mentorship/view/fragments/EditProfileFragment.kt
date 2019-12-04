@@ -1,7 +1,12 @@
 package org.systers.mentorship.view.fragments
 
 
+import android.Manifest
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -12,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.databinding.DataBindingUtil
 import org.systers.mentorship.R
 import org.systers.mentorship.databinding.FragmentEditProfileBinding
@@ -27,6 +33,9 @@ class EditProfileFragment: DialogFragment() {
 
     companion object {
         private lateinit var tempUser: User
+        val PERMISSION_CODE_READ : Int = 1001
+        val PERMISSION_CODE_WRITE : Int = 1002
+        val IMAGE_PICK_CODE : Int = 1000
         /**
          * Creates an instance of EditProfileFragment
          */
@@ -66,6 +75,10 @@ class EditProfileFragment: DialogFragment() {
 
         editProfileBinding.user = tempUser.copy()
         currentUser = tempUser.copy()
+
+        editProfileBinding.imgUserAvatar.setOnClickListener{
+            pickImageFromGallery()
+        }
 
         val dialogBuilder = AlertDialog.Builder(context!!)
         dialogBuilder.setView(editProfileBinding.root)
@@ -130,4 +143,22 @@ class EditProfileFragment: DialogFragment() {
         }
         return errors
     }
+
+
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            editProfileBinding.imgUserAvatar.setImageURI(data?.data)
+        }
+    }
+
+
 }
