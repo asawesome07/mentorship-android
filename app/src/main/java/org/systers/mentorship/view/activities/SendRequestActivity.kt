@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.text.Editable
 import com.google.android.material.snackbar.Snackbar
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -77,7 +78,7 @@ class SendRequestActivity: BaseActivity() {
         btnSendRequest.setOnClickListener {
             val mentorId: Int
             val menteeId: Int
-            val notes = etRequestNotes.text.toString()
+            val notes = etRequestNotes.text.toString().trim()
             val endDate = convertDateIntoUnixTimestamp(
                     tvRequestEndDate.text.toString(), SEND_REQUEST_END_DATE_FORMAT)
 
@@ -111,6 +112,7 @@ class SendRequestActivity: BaseActivity() {
             } else {
 
                 etRequestNotes.error = getString(R.string.notes_empty_error)
+                etRequestNotes.setText("")
             }
         }
     }
