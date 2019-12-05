@@ -60,4 +60,7 @@ interface RelationService {
      */
     @GET("mentorship_relations/current")
     fun getCurrentRelationship(): Observable<Relationship>
+
+    @GET("mentorship_relations/past")
+    fun getPastRelationships(): Observable<List<Relationship>>
 }

@@ -26,8 +26,10 @@ class RequestsViewModel : ViewModel() {
     private val relationDataManager = RelationDataManager()
 
     val successful: MutableLiveData<Boolean> = MutableLiveData()
+    val pastGetSuccessful : MutableLiveData<Boolean> = MutableLiveData()
     lateinit var message: String
     lateinit var allRequestsList: List<Relationship>
+    lateinit var allPastRequestsList : List<Relationship>
 
     /**
      * Fetches list of all Mentorship relations and requests
@@ -67,6 +69,46 @@ class RequestsViewModel : ViewModel() {
 
                     override fun onComplete() {
                     }
+                })
+    }
+    //get past mentorship relations
+    @SuppressLint("CheckResult")
+    fun getPastMentorshipRelations() {
+        relationDataManager.getPastRelationships()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableObserver<List<Relationship>>() {
+                    override fun onComplete() {
+
+                    }
+
+                    override fun onNext(t: List<Relationship>) {
+                        allPastRequestsList = t
+                        pastGetSuccessful.value = true
+                    }
+
+                    override fun onError(e: Throwable) {
+                        when (e) {
+                            is IOException -> {
+                                message = MentorshipApplication.getContext()
+                                        .getString(R.string.error_please_check_internet)
+                            }
+                            is TimeoutException -> {
+                                message = MentorshipApplication.getContext()
+                                        .getString(R.string.error_request_timed_out)
+                            }
+                            is HttpException -> {
+                                message = CommonUtils.getErrorResponse(e).message.toString()
+                            }
+                            else -> {
+                                message = MentorshipApplication.getContext()
+                                        .getString(R.string.error_something_went_wrong)
+                                Log.e(TAG, e.localizedMessage)
+                            }
+                        }
+                        pastGetSuccessful.value = false
+                    }
+
                 })
     }
 }

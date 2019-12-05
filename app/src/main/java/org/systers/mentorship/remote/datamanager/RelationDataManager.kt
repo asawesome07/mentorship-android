@@ -74,4 +74,8 @@ class RelationDataManager {
     fun getCurrentRelationship(): Observable<Relationship> {
         return apiManager.relationService.getCurrentRelationship()
     }
+
+    fun getPastRelationships(): Observable<List<Relationship>> {
+        return apiManager.relationService.getPastRelationships()
+    }
 }

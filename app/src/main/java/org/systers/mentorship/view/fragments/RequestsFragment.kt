@@ -37,11 +37,23 @@ class RequestsFragment : BaseFragment() {
         requestsViewModel = ViewModelProviders.of(this).get(RequestsViewModel::class.java)
         requestsViewModel.successful.observe(this, Observer {
             successful ->
-            activityCast.hideProgressDialog()
             if (successful != null) {
                 if (successful) {
-                        vpMentorshipRequests.adapter = RequestsPagerAdapter(requestsViewModel.allRequestsList, childFragmentManager)
-                        tlMentorshipRequests.setupWithViewPager(vpMentorshipRequests)
+                    requestsViewModel.pastGetSuccessful.observe(this, Observer {
+                        successful ->
+                        activityCast.hideProgressDialog()
+                        if (successful != null) {
+                            if (successful) {
+                                vpMentorshipRequests.adapter = RequestsPagerAdapter(requestsViewModel.allRequestsList, requestsViewModel.allPastRequestsList,childFragmentManager)
+                                tlMentorshipRequests.setupWithViewPager(vpMentorshipRequests)
+                            }
+                            else {
+                                view?.let {
+                                    Snackbar.make(it, requestsViewModel.message, Snackbar.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    })
                 } else {
                     view?.let {
                         Snackbar.make(it, requestsViewModel.message, Snackbar.LENGTH_LONG).show()
@@ -52,5 +64,6 @@ class RequestsFragment : BaseFragment() {
 
         activityCast.showProgressDialog(getString(R.string.fetching_requests))
         requestsViewModel.getAllMentorshipRelations()
+        requestsViewModel.getPastMentorshipRelations()
     }
 }
