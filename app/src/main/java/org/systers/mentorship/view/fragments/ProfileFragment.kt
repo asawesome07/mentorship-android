@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import kotlinx.android.synthetic.main.fragment_profile.*
 import org.systers.mentorship.R
 import org.systers.mentorship.databinding.FragmentProfileBinding
 import org.systers.mentorship.viewmodels.ProfileViewModel
@@ -37,7 +38,7 @@ class ProfileFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         setHasOptionsMenu(true)
-
+        baseActivity.setSupportActionBar(toolbar)
         profileViewModel = ViewModelProviders.of(activity!!).get(ProfileViewModel::class.java)
         profileViewModel.successfulGet.observe(this, Observer {
             successful ->
